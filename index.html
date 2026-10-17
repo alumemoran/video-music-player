@@ -4,6 +4,18 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>VIDEO MUSIC PLAYER</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#080808;color:#fff;font-family:Arial,Helvetica,sans-serif}header{background:#111;padding:16px;text-align:center;font-size:24px;font-weight:bold;border-bottom:2px solid #333}.container{max-width:1200px;margin:auto;padding:15px}.panel{background:#151515;border:1px solid #333;border-radius:10px;padding:15px;margin-bottom:15px}.panel h2{margin-top:0;font-size:20px}input,select,button{width:100%;padding:11px;margin:5px 0;border-radius:6px;border:1px solid #444;background:#222;color:white;font-size:15px}button{cursor:pointer;font-weight:bold}button:hover{background:#333}.add{background:#166534}.tvbutton{background:#1d4ed8}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.player-container{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;border-radius:10px}#player{width:100%;height:100%}.brand,.tv-brand{position:absolute;z-index:20;display:flex;align-items:center;gap:10px;pointer-events:none}.brand img{max-width:100px;max-height:70px;object-fit:contain}.brand span{font-size:20px;font-weight:bold;text-shadow:2px 2px 5px #000}.top-left{top:18px;left:18px}.top-right{top:18px;right:18px}.bottom-left{bottom:18px;left:18px}.bottom-right{bottom:18px;right:18px}#songTitle,#tvModeTitle{position:absolute;left:20px;bottom:62px;z-index:30;background:rgba(0,0,0,.78);padding:10px 15px;border-radius:5px;font-size:20px;font-weight:bold;opacity:0;transform:translateY(10px);transition:.5s;pointer-events:none}#songTitle.show,#tvModeTitle.show{opacity:1;transform:translateY(0)}.next-song-banner{position:absolute;left:0;right:0;bottom:0;z-index:35;padding:12px 18px;background:rgba(0,0,0,.9);border-top:2px solid #fff;color:#fff;font-size:17px;font-weight:bold;display:none;pointer-events:none}.next-song-banner.visible{display:block}.next-song-banner .label{color:#facc15;margin-right:10px}.transition{position:absolute;inset:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .45s}.transition.active{opacity:1}.transition img{width:150px;max-height:120px;object-fit:contain;animation:zoom 1.4s ease forwards}.transition-text{margin-top:20px;font-size:28px;font-weight:bold;text-align:center;animation:appear 1.2s ease forwards}.shine{position:absolute;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,.08);animation:shine 1.5s ease infinite}@keyframes zoom{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}@keyframes appear{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes shine{0%{transform:scale(.7);opacity:0}50%{transform:scale(1.2);opacity:1}100%{transform:scale(1.5);opacity:0}}.bumper-screen{position:absolute;inset:0;z-index:90;background:#000;display:none}.bumper-screen.active{display:block}#bumperPlayer,#tvBumperPlayer{position:absolute;inset:0;width:100%;height:100%}.bumper-caption{position:absolute;left:25px;bottom:55px;z-index:10;background:rgba(0,0,0,.72);padding:12px 20px;font-size:24px;font-weight:bold;border-radius:5px;text-shadow:2px 2px 4px #000}.list{margin-top:15px}.item{background:#202020;border:1px solid #383838;padding:12px;border-radius:7px;margin-bottom:8px}.item strong{display:block;margin-bottom:8px}.item-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.item-buttons button{margin:0}.status{min-height:20px;margin-top:8px;font-size:14px}.status.ok{color:#4ade80}.status.error{color:#f87171}body.bumper-playing #songTitle,body.bumper-playing #nextSongBanner,body.bumper-playing #tvModeTitle,body.bumper-playing #tvNextSongBanner{display:none!important}#tvModeScreen{position:fixed;inset:0;z-index:9999;background:#000;display:none}#tvModeVideo{position:absolute;inset:0;width:100%;height:100%}#tvBumperScreen{position:absolute;inset:0;z-index:20;display:none;background:#000}#tvBumperScreen.active{display:block}.tv-brand img{max-width:120px;max-height:80px;object-fit:contain}.tv-brand span{font-size:24px;font-weight:bold;text-shadow:2px 2px 6px #000}#tvModeTitle{bottom:65px;left:30px;font-size:25px}#tvNextSongBanner{z-index:45}.tv-transition{position:absolute;inset:0;z-index:50;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:.45s}.tv-transition.active{opacity:1}.tv-transition img{width:180px;max-height:130px;object-fit:contain}.tv-transition-text{font-size:30px;font-weight:bold;margin-top:20px}#tvExit{position:absolute;top:15px;right:15px;z-index:100;width:auto;padding:10px 16px;background:rgba(0,0,0,.7)}body.tv-active{overflow:hidden}@media(max-width:650px){.row{grid-template-columns:1fr 1fr}.item-buttons{grid-template-columns:1fr}.brand span{font-size:14px}.transition-text{font-size:20px}.next-song-banner{font-size:13px;padding:9px}.bumper-caption{font-size:18px;left:10px;bottom:45px}}
+
+/* MODO CIERRE: mensaje lento de izquierda a derecha */
+.closure-screen{position:absolute;inset:0;z-index:110;display:none;overflow:hidden;background:#000;color:#fff;align-items:center;justify-content:center}
+.closure-screen.active{display:flex}
+.closure-heading{position:absolute;top:18%;left:0;right:0;text-align:center;font-size:clamp(18px,3vw,30px);font-weight:bold;letter-spacing:3px;color:#ddd}
+.closure-marquee{position:absolute;top:48%;left:0;width:max-content;max-width:none;white-space:nowrap;font-size:clamp(20px,3.8vw,42px);font-weight:bold;animation:closureMoveRight 90s linear infinite}
+@keyframes closureMoveRight{from{transform:translateX(-100%)}to{transform:translateX(100vw)}}
+.closure-screen .closure-small{position:absolute;bottom:12%;left:0;right:0;text-align:center;color:#aaa;font-size:clamp(11px,1.4vw,16px)}
+#normalBrand.closure-logo,#tvBrand.closure-logo{z-index:120}
+body.closure-active #songTitle,body.closure-active #nextSongBanner,body.closure-active #tvModeTitle,body.closure-active #tvNextSongBanner{display:none!important}
+@media(prefers-reduced-motion:reduce){.closure-marquee{animation-duration:180s}}
+
 </style>
 </head>
 <body>
@@ -16,6 +28,7 @@
    <div id="normalBrand" class="brand top-left"><img id="channelLogo" alt="Logo del canal" style="display:none"><span id="channelBrandText"></span></div>
    <div id="songTitle"></div>
    <div id="nextSongBanner" class="next-song-banner"><span class="label">A CONTINUACIÓN</span><span id="nextSongName">Sin programación</span></div>
+   <div id="closureScreen" class="closure-screen"><div class="closure-heading">FIN DE TRANSMISIONES</div><div id="closureMarquee" class="closure-marquee">MTV 80s ESPAÑOL VA A CERRAR. GRACIAS POR SER PARTE DE NUESTRA HISTORIA.</div><div class="closure-small">Gracias por acompañarnos. Hasta siempre.</div></div>
    <div id="transitionOverlay" class="transition"><div class="shine"></div><img id="transitionLogo" alt="Logo" style="display:none"><div id="transitionText" class="transition-text">SALVADO POR LOS 00S!</div></div>
    <div id="bumperScreen" class="bumper-screen"><div id="bumperPlayer"></div><div id="bumperText" class="bumper-caption"></div></div>
   </div>
@@ -23,6 +36,14 @@
  </div>
  <div class="panel"><h2>AGREGAR VIDEOCLIP</h2><input id="videoUrl" placeholder="URL de YouTube"><input id="videoName" placeholder="Nombre de la canción"><button class="add" onclick="addVideo()">+ AGREGAR VIDEO</button><div id="videoStatus" class="status"></div><div id="videoList" class="list"></div></div>
  <div class="panel"><h2>AGREGAR COMERCIAL O LOOP OFF AIR</h2><input id="bumperUrl" placeholder="URL de YouTube del comercial o loop"><input id="bumperName" placeholder="Nombre (ej. Comercial / Cierre OFF AIR)"><input id="bumperTextInput" placeholder="Texto opcional sobre el video"><input id="bumperDuration" type="number" min="1" value="15" placeholder="Duración máxima en segundos"><button class="add" onclick="addBumper()">+ AGREGAR COMERCIAL / LOOP</button><div id="bumperStatus" class="status"></div><div id="bumperList" class="list"></div><p style="color:#aaa;font-size:13px">La duración es un límite de reproducción. Si YouTube termina antes, el reproductor continúa automáticamente.</p></div>
+ <div class="panel"><h2>MENSAJE INFORMATIVO / CIERRE DE CANAL</h2>
+  <input id="closureHeadingInput" placeholder="Título (ej. FIN DE TRANSMISIONES)" value="FIN DE TRANSMISIONES">
+  <input id="closureMessageInput" placeholder="Mensaje de cierre" value="MTV 80s ESPAÑOL VA A CERRAR. GRACIAS POR SER PARTE DE NUESTRA HISTORIA.">
+  <input id="closureFooterInput" placeholder="Texto inferior opcional" value="Gracias por acompañarnos. Hasta siempre.">
+  <label for="closureSpeed" style="display:block;margin-top:8px;color:#ccc">Velocidad del texto (segundos por recorrido)</label><select id="closureSpeed"><option value="60">60 segundos, lento</option><option value="90" selected>90 segundos, muy lento</option><option value="120">120 segundos, extra lento</option><option value="180">180 segundos, cierre solemne</option></select>
+  <div class="row"><button class="add" onclick="startClosure()">INICIAR CIERRE</button><button onclick="stopClosure()">TERMINAR CIERRE</button></div>
+  <div id="closureStatus" class="status"></div><p style="color:#aaa;font-size:13px">El cierre cubre el video con una pantalla negra y desplaza el mensaje de izquierda a derecha. El audio del videoclip se pausa.</p>
+ </div>
  <div class="panel"><h2>LOGO DEL CANAL</h2><input id="logoUrl" placeholder="URL directa de imagen PNG/JPG"><input id="logoText" placeholder="Texto al lado del logo"><select id="logoPosition"><option value="top-left">Arriba izquierda</option><option value="top-right">Arriba derecha</option><option value="bottom-left">Abajo izquierda</option><option value="bottom-right">Abajo derecha</option></select><button class="add" onclick="saveLogo()">GUARDAR LOGO</button><div id="logoStatus" class="status"></div></div>
 </div>
 <div id="tvModeScreen">
@@ -30,6 +51,7 @@
  <div id="tvBrand" class="tv-brand top-left"><img id="tvModeLogo" alt="Logo del canal" style="display:none"><span id="tvModeBrandText"></span></div>
  <div id="tvModeTitle"></div>
  <div id="tvNextSongBanner" class="next-song-banner"><span class="label">A CONTINUACIÓN</span><span id="tvNextSongName">Sin programación</span></div>
+ <div id="tvClosureScreen" class="closure-screen"><div id="tvClosureHeading" class="closure-heading">FIN DE TRANSMISIONES</div><div id="tvClosureMarquee" class="closure-marquee">MTV 80s ESPAÑOL VA A CERRAR. GRACIAS POR SER PARTE DE NUESTRA HISTORIA.</div><div id="tvClosureFooter" class="closure-small">Gracias por acompañarnos. Hasta siempre.</div></div>
  <div id="tvTransition" class="tv-transition"><img id="tvTransitionLogo" alt="Logo" style="display:none"><div id="tvTransitionText" class="tv-transition-text">SALVADO POR LOS 00S!</div></div>
  <div id="tvBumperScreen"><div id="tvBumperPlayer"></div><div id="tvBumperText" class="bumper-caption"></div></div>
  <button id="tvExit" onclick="closeTVMode()">SALIR DE MODO TV</button>
@@ -84,7 +106,7 @@ function updateNextSongBanner(){const show=videos.length>0;const next=show?video
 function showSongTitle(name){const el=document.getElementById('songTitle');el.textContent=name||'';el.classList.add('show');clearTimeout(titleTimer);titleTimer=setTimeout(()=>el.classList.remove('show'),10000)}
 function showStatus(id,msg,ok){const el=document.getElementById(id);el.textContent=msg;el.className='status '+(ok?'ok':'error');setTimeout(()=>{el.textContent='';el.className='status'},5500)}
 function makeButton(label,fn){const b=document.createElement('button');b.textContent=label;b.addEventListener('click',fn);return b}
-function openTVMode(){if(!videos.length)return showStatus('videoStatus','Añade al menos un videoclip primero.',false);document.getElementById('tvModeScreen').style.display='block';document.body.classList.add('tv-active');tvModeActive=true;createTVPlayers();applyTVLogo();updateNextSongBanner();if(tvPlayer&&tvPlayersCreated){tvPlayer.loadVideoById(videos[currentVideo].id);showTVTitle(videos[currentVideo].name)}}
+function openTVMode(){if(!videos.length)return showStatus('videoStatus','Añade al menos un videoclip primero.',false);document.getElementById('tvModeScreen').style.display='block';if(closureActive){document.getElementById('closureScreen').classList.remove('active');document.getElementById('tvClosureScreen').classList.add('active');}document.body.classList.add('tv-active');tvModeActive=true;createTVPlayers();applyTVLogo();updateNextSongBanner();if(tvPlayer&&tvPlayersCreated){tvPlayer.loadVideoById(videos[currentVideo].id);showTVTitle(videos[currentVideo].name)}}
 function createTVPlayers(){if(tvPlayersCreated||!youtubeReady)return;tvPlayersCreated=true;tvPlayer=new YT.Player('tvModeVideo',{width:'100%',height:'100%',playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,modestbranding:1},events:{onStateChange:onTVPlayerState,onError:e=>showStatus('videoStatus','No se pudo reproducir el video en Modo TV (error '+e.data+').',false)}});tvBumperPlayer=new YT.Player('tvBumperPlayer',{width:'100%',height:'100%',playerVars:{autoplay:0,controls:0,rel:0,playsinline:1,modestbranding:1},events:{onStateChange:onTVBumperState,onError:e=>{if(tvBumperMode==='auto')finishTVAutomaticBumper();showStatus('bumperStatus','YouTube no permitió reproducir el bumper en Modo TV.',false)}}})}
 function onTVPlayerState(e){if(e.data===YT.PlayerState.ENDED)startTVTransition()}
 function startTVTransition(){if(!videos.length)return;currentVideo=(currentVideo+1)%videos.length;updateNextSongBanner();setTransitionLogo('tvTransitionLogo','tvTransitionText');document.getElementById('tvTransition').classList.add('active');setTimeout(()=>{if(bumpers.length)playTVAutomaticBumper();else finishTVTransition()},1400)}
@@ -94,8 +116,39 @@ function finishTVAutomaticBumper(){if(tvBumperMode!=='auto')return;tvBumperMode=
 function finishTVTransition(){document.getElementById('tvTransition').classList.remove('active');document.getElementById('tvBumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');const v=videos[currentVideo];if(!v)return;if(tvPlayer){tvPlayer.loadVideoById(v.id);tvPlayer.playVideo()}showTVTitle(v.name);updateNextSongBanner()}
 function showTVTitle(name){const el=document.getElementById('tvModeTitle');el.textContent=name||'';el.classList.add('show');clearTimeout(tvTitleTimer);tvTitleTimer=setTimeout(()=>el.classList.remove('show'),10000)}
 function applyTVLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('tvModeLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('tvModeBrandText').textContent=text;document.getElementById('tvBrand').className='tv-brand '+pos}
-function closeTVMode(){tvModeActive=false;document.getElementById('tvModeScreen').style.display='none';document.body.classList.remove('tv-active','bumper-playing');clearTimeout(tvBumperTimer);tvBumperTimer=null;tvBumperMode=null;document.getElementById('tvBumperScreen').classList.remove('active');document.getElementById('tvTransition').classList.remove('active');if(tvPlayer)tvPlayer.stopVideo();if(tvBumperPlayer)tvBumperPlayer.stopVideo()}
+function closeTVMode(){tvModeActive=false;document.getElementById('tvModeScreen').style.display='none';if(closureActive){document.getElementById('tvClosureScreen').classList.remove('active');document.getElementById('closureScreen').classList.add('active');}document.body.classList.remove('tv-active','bumper-playing');clearTimeout(tvBumperTimer);tvBumperTimer=null;tvBumperMode=null;document.getElementById('tvBumperScreen').classList.remove('active');document.getElementById('tvTransition').classList.remove('active');if(tvPlayer)tvPlayer.stopVideo();if(tvBumperPlayer)tvBumperPlayer.stopVideo()}
+
+let closureActive=false;
+function startClosure(){
+ const heading=(document.getElementById('closureHeadingInput').value||'FIN DE TRANSMISIONES').trim();
+ const message=(document.getElementById('closureMessageInput').value||'GRACIAS POR ACOMPAÑARNOS').trim();
+ const footer=(document.getElementById('closureFooterInput').value||'').trim();
+ const seconds=Math.max(10,Number(document.getElementById('closureSpeed').value)||90);
+ closureActive=true;document.body.classList.add('closure-active');
+ if(player&&typeof player.pauseVideo==='function')player.pauseVideo();
+ if(tvPlayer&&typeof tvPlayer.pauseVideo==='function')tvPlayer.pauseVideo();
+ if(bumperPlayer&&bumperMode){try{bumperPlayer.pauseVideo()}catch(e){}}
+ const normal=document.getElementById('closureScreen');
+ const tv=document.getElementById('tvClosureScreen');
+ document.getElementById('closureMarquee').textContent=message;
+ document.getElementById('tvClosureMarquee').textContent=message;
+ document.querySelector('#closureScreen .closure-heading').textContent=heading;
+ document.getElementById('tvClosureHeading').textContent=heading;
+ document.querySelector('#closureScreen .closure-small').textContent=footer;
+ document.getElementById('tvClosureFooter').textContent=footer;
+ [normal,tv].forEach(el=>{el.classList.add('active');const marquee=el.querySelector('.closure-marquee');marquee.style.animationDuration=seconds+'s';marquee.style.animationName='none';void marquee.offsetWidth;marquee.style.animationName='closureMoveRight'});
+ if(tvModeActive){normal.classList.remove('active');tv.classList.add('active');}else{tv.classList.remove('active');normal.classList.add('active');}
+ document.getElementById('normalBrand').classList.add('closure-logo');document.getElementById('tvBrand').classList.add('closure-logo');
+ showStatus('closureStatus','Modo cierre activado. El mensaje se desplaza lentamente hacia la derecha.',true);
+}
+function stopClosure(){
+ closureActive=false;document.body.classList.remove('closure-active');
+ document.getElementById('closureScreen').classList.remove('active');document.getElementById('tvClosureScreen').classList.remove('active');
+ document.getElementById('normalBrand').classList.remove('closure-logo');document.getElementById('tvBrand').classList.remove('closure-logo');
+ showStatus('closureStatus','Modo cierre terminado.',true);
+}
 document.addEventListener('DOMContentLoaded',()=>{renderVideos();renderBumpers();applyLogo();updateNextSongBanner()});
 </script>
 </body>
 </html>
+
