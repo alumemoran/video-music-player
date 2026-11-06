@@ -89,9 +89,9 @@ body.closure-active #songTitle,body.closure-active #nextSongBanner,body.closure-
  <div class="panel"><h2>AGREGAR COMERCIAL O LOOP OFF AIR</h2><input id="bumperUrl" placeholder="URL de YouTube del comercial o loop"><input id="bumperName" placeholder="Nombre (ej. Comercial / Cierre OFF AIR)"><input id="bumperTextInput" placeholder="Texto opcional sobre el video"><button class="add" onclick="addBumper()">+ AGREGAR COMERCIAL / LOOP</button><div id="bumperStatus" class="status"></div><div id="bumperList" class="list"></div></div>
  <div class="panel"><h2>TEXTOS DE TRANSMISIÓN</h2>
   <label for="beforeCommercialText" style="display:block;color:#ccc;margin-top:8px">Texto antes del comercial o loop</label>
-  <input id="beforeCommercialText" value="¡QUIERO MIS 80s!" placeholder="Ej. ¡QUIERO MIS 80s!">
+  <input id="beforeCommercialText" value="¡QUIERO MI 80s!" placeholder="Ej. ¡QUIERO MI 80s!">
   <label for="afterCommercialText" style="display:block;color:#ccc;margin-top:8px">Texto después del comercial o loop</label>
-  <input id="afterCommercialText" value="¡ADIÓS A MTV 80s!" placeholder="Ej. ¡ADIÓS A MTV 80s!">
+  <input id="afterCommercialText" value="¡ADIÓS A MTV80s!" placeholder="Ej. ¡ADIÓS A MTV80s!">
   <label for="broadcastPopupType" style="display:block;color:#ccc;margin-top:8px">Estilo del pop-up</label>
   <select id="broadcastPopupType"><option value="AVISO IMPORTANTE">AVISO IMPORTANTE</option><option value="NOTICIAS">NOTICIAS</option><option value="CESE DE TRANSMISIONES">CESE DE TRANSMISIONES</option><option value="ÚLTIMA HORA">ÚLTIMA HORA</option></select>
   <label for="broadcastMessageDuration" style="display:block;color:#ccc;margin-top:8px">Duración del pop-up</label>
@@ -99,7 +99,7 @@ body.closure-active #songTitle,body.closure-active #nextSongBanner,body.closure-
   <button class="add" onclick="saveBroadcastSettings()">GUARDAR TEXTOS</button><div id="broadcastStatus" class="status"></div>
   <p style="color:#aaa;font-size:13px">El pop-up aparece pequeño en la esquina superior derecha, como un aviso de noticias o cese de transmisiones. Se oculta durante el comercial y vuelve al comenzar el siguiente videoclip. También funciona en Modo TV.</p>
  </div>
- <div class="panel"><h2>LOGO DEL CANAL</h2><input id="logoUrl" placeholder="URL directa de imagen PNG/JPG"><input id="logoText" placeholder="Texto al lado del logo"><select id="logoPosition"><option value="top-left">Arriba izquierda</option><option value="top-right">Arriba derecha</option><option value="bottom-left">Abajo izquierda</option><option value="bottom-right">Abajo derecha</option></select><button class="add" onclick="saveLogo()">GUARDAR LOGO</button><div id="logoStatus" class="status"></div></div>
+ <div class="panel"><h2>LOGO DEL CANAL</h2><input id="logoUrl" placeholder="URL directa de imagen PNG/JPG"><input id="logoText" placeholder="Texto al lado del logo"><label for="logoTextColor" style="display:block;color:#ccc;margin-top:8px">Color del texto al lado del logo</label><input id="logoTextColor" type="color" value="#ffffff"><select id="logoPosition"><option value="top-left">Arriba izquierda</option><option value="top-right">Arriba derecha</option><option value="bottom-left">Abajo izquierda</option><option value="bottom-right">Abajo derecha</option></select><button class="add" onclick="saveLogo()">GUARDAR LOGO</button><div id="logoStatus" class="status"></div></div>
 </div>
 <div id="tvModeScreen">
  <div id="tvModeVideo"></div>
@@ -186,8 +186,8 @@ function testBumper(i){const b=bumpers[i];if(!b||!bumperPlayer)return;stopNormal
 function finishManualBumper(){if(bumperMode!=='manual')return;bumperMode=null;++bumperRunId;clearTimeout(bumperTimer);bumperTimer=null;document.getElementById('bumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');if(bumperPlayer)bumperPlayer.stopVideo()}
 function deleteBumper(i){bumpers.splice(i,1);localStorage.setItem(STORAGE_BUMPERS,JSON.stringify(bumpers));renderBumpers()}
 function moveBumper(i,delta){const j=i+delta;if(j<0||j>=bumpers.length)return;[bumpers[i],bumpers[j]]=[bumpers[j],bumpers[i]];localStorage.setItem(STORAGE_BUMPERS,JSON.stringify(bumpers));renderBumpers()}
-function saveLogo(){localStorage.setItem('channelLogoUrl',document.getElementById('logoUrl').value.trim());localStorage.setItem('channelLogoText',document.getElementById('logoText').value.trim());localStorage.setItem('channelLogoPosition',document.getElementById('logoPosition').value);applyLogo();showStatus('logoStatus','Logo guardado correctamente.',true)}
-function applyLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('channelLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('channelBrandText').textContent=text;document.getElementById('normalBrand').className='brand '+pos;document.getElementById('logoUrl').value=url;document.getElementById('logoText').value=text;document.getElementById('logoPosition').value=pos;applyTVLogo();setTransitionLogo('transitionLogo','transitionText');setTransitionLogo('tvTransitionLogo','tvTransitionText')}
+function saveLogo(){localStorage.setItem('channelLogoUrl',document.getElementById('logoUrl').value.trim());localStorage.setItem('channelLogoText',document.getElementById('logoText').value.trim());localStorage.setItem('channelLogoTextColor',document.getElementById('logoTextColor').value);localStorage.setItem('channelLogoPosition',document.getElementById('logoPosition').value);applyLogo();showStatus('logoStatus','Logo y color del texto guardados correctamente.',true)}
+function applyLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',color=localStorage.getItem('channelLogoTextColor')||'#ffffff',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('channelLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('channelBrandText').textContent=text;document.getElementById('channelBrandText').style.color=color;document.getElementById('normalBrand').className='brand '+pos;document.getElementById('logoUrl').value=url;document.getElementById('logoText').value=text;document.getElementById('logoTextColor').value=color;document.getElementById('logoPosition').value=pos;applyTVLogo();setTransitionLogo('transitionLogo','transitionText');setTransitionLogo('tvTransitionLogo','tvTransitionText')}
 function updateNextSongBanner(){const show=videos.length>0;const next=show?videos[(currentVideo+1)%videos.length].name:'Sin programación';const label=next||'Video sin nombre';document.getElementById('nextSongName').textContent=label;document.getElementById('tvNextSongName').textContent=label;document.getElementById('transitionNextSongName').textContent=label;document.getElementById('tvTransitionNextSongName').textContent=label;hideNextSongBanner()}
 function showNextSongBanner(){const id=tvModeActive?'tvNextSongBanner':'nextSongBanner';document.getElementById(id).classList.toggle('visible',videos.length>0)}
 function hideNextSongBanner(){document.getElementById('nextSongBanner').classList.remove('visible');document.getElementById('tvNextSongBanner').classList.remove('visible')}
@@ -199,8 +199,8 @@ function saveBroadcastSettings(){
  showStatus('broadcastStatus','Textos y estilo del pop-up guardados.',true);
 }
 function loadBroadcastSettings(){
- document.getElementById('beforeCommercialText').value=localStorage.getItem('broadcastBeforeText')??'¡QUIERO MIS 80s!';
- document.getElementById('afterCommercialText').value=localStorage.getItem('broadcastAfterText')??'¡ADIÓS A MTV 80s!';
+ document.getElementById('beforeCommercialText').value=localStorage.getItem('broadcastBeforeText')??'¡QUIERO MI 80s!';
+ document.getElementById('afterCommercialText').value=localStorage.getItem('broadcastAfterText')??'¡ADIÓS A MTV80s!';
  document.getElementById('broadcastMessageDuration').value=localStorage.getItem('broadcastMessageDuration')||'10';
  document.getElementById('broadcastPopupType').value=localStorage.getItem('broadcastPopupType')||'AVISO IMPORTANTE';
 }
@@ -211,7 +211,7 @@ function hideBroadcastMessages(){
 function showBroadcastMessage(phase){
  if(closureActive||bumperMode==='auto'||tvBumperMode==='auto')return;
  const key=phase==='before'?'broadcastBeforeText':'broadcastAfterText';
- const fallback=phase==='before'?'¡QUIERO MIS 80s!':'¡ADIÓS A MTV 80s!';
+ const fallback=phase==='before'?'¡QUIERO MI 80s!':'¡ADIÓS A MTV 80s!';
  const message=(localStorage.getItem(key)??fallback).trim();
  hideBroadcastMessages(); if(!message)return;
  const target=tvModeActive?'tvBroadcastMessage':'broadcastMessage';
@@ -253,7 +253,7 @@ function onTVBumperState(e){if(e.data===YT.PlayerState.ENDED&&tvBumperMode==='au
 function finishTVAutomaticBumper(){if(tvBumperMode!=='auto')return;tvBumperMode=null;++tvBumperRunId;clearTimeout(tvBumperTimer);tvBumperTimer=null;document.getElementById('tvBumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');if(tvBumperPlayer)tvBumperPlayer.stopVideo();finishTVTransition()}
 function finishTVTransition(){oneMinuteShownKey="";hideOneMinuteAnnouncement();document.getElementById('tvTransition').classList.remove('active');document.getElementById('tvBumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');hideNextSongBanner();const v=videos[currentVideo];if(!v)return;if(tvPlayer){tvPlayer.loadVideoById(v.id);tvPlayer.playVideo()}showTVTitle(v.name);showBroadcastMessage('after');updateNextSongBanner()}
 function showTVTitle(name){applySongTitleStyle();const el=document.getElementById('tvModeTitle');el.textContent=name||'';el.classList.add('show');clearTimeout(tvTitleTimer);tvTitleTimer=setTimeout(()=>el.classList.remove('show'),10000)}
-function applyTVLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('tvModeLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('tvModeBrandText').textContent=text;document.getElementById('tvBrand').className='tv-brand '+pos}
+function applyTVLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',color=localStorage.getItem('channelLogoTextColor')||'#ffffff',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('tvModeLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('tvModeBrandText').textContent=text;document.getElementById('tvModeBrandText').style.color=color;document.getElementById('tvBrand').className='tv-brand '+pos}
 function showTVExitControl(){if(!tvModeActive)return;const button=document.getElementById('tvExit');button.classList.add('visible');clearTimeout(tvExitHideTimer);tvExitHideTimer=setTimeout(()=>{if(!document.getElementById('tvExitConfirm').classList.contains('visible'))button.classList.remove('visible')},2400)}
 function askCloseTVMode(){if(!tvModeActive)return;clearTimeout(tvExitHideTimer);document.getElementById('tvExit').classList.add('visible');document.getElementById('tvExitConfirm').classList.add('visible')}
 function cancelCloseTVMode(){document.getElementById('tvExitConfirm').classList.remove('visible');showTVExitControl()}
