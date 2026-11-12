@@ -77,6 +77,17 @@ body.closure-active #songTitle,body.closure-active #nextSongBanner,body.closure-
 @keyframes continuityGlitch{0%{opacity:0;transform:translateX(-18px);filter:hue-rotate(90deg)}25%{opacity:1;transform:translateX(8px);filter:hue-rotate(-90deg)}50%{transform:translateX(-4px);filter:none}100%{opacity:1;transform:translateX(0);filter:none}}
 @keyframes continuityFlash{0%{opacity:0;background:#fff;filter:brightness(4)}35%{opacity:1;background:#000;filter:brightness(1)}100%{opacity:1;background:#000;filter:none}}
 @media(max-width:650px){.transmission-clock{top:8px;right:8px;font-size:13px;padding:5px 7px;letter-spacing:1px}#tvTransmissionClock{top:12px;right:12px}}
+
+/* TOP y continuidad con identificación de canción actual */
+.top-rank{position:absolute;left:20px;top:18%;z-index:34;display:none;padding:7px 12px;background:rgba(0,0,0,.82);border-left:5px solid #f5df32;color:#fff;font-weight:900;font-size:clamp(13px,1.5vw,20px);letter-spacing:1px;text-shadow:1px 2px 3px #000;pointer-events:none}
+.top-rank.visible{display:block;animation:vh1PopIn .3s ease-out both}
+.transition-current{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:18px;padding:9px 16px;max-width:88%;text-align:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:6px}
+.transition-current span{font-size:clamp(10px,1.1vw,14px);font-weight:900;letter-spacing:2px;color:#f5df32}
+.transition-current strong{font-size:clamp(15px,1.8vw,22px);overflow-wrap:anywhere}
+.vh1-pop-body{min-height:74px}
+.vh1-pop-page{display:block;margin-top:6px;font-size:10px;letter-spacing:1px;opacity:.7}
+@media(max-width:650px){.top-rank{left:10px;top:16%;font-size:12px}.transition-current{margin-top:10px;padding:7px 10px}}
+
 </style>
 </head>
 <body>
@@ -87,24 +98,29 @@ body.closure-active #songTitle,body.closure-active #nextSongBanner,body.closure-
    <div id="player"></div>
    <div id="youtubeError" style="display:none;position:absolute;inset:0;z-index:120;background:#111;padding:24px;text-align:center;align-content:center;line-height:1.5"><strong id="youtubeErrorTitle">YouTube no pudo reproducir este video</strong><p id="youtubeErrorText"></p><a id="youtubeOpenLink" href="#" target="_blank" rel="noopener" style="display:inline-block;background:#c00;color:white;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:bold">ABRIR EN YOUTUBE</a></div>
    <div id="normalBrand" class="brand top-left"><img id="channelLogo" alt="Logo del canal" style="display:none"><span id="channelBrandText"></span></div>
-   <div id="songTitle"></div>
+   <div id="songTitle"></div><div id="topRankNormal" class="top-rank"></div>
    <div id="broadcastMessage" class="broadcast-message"></div>
    <div id="vh1Popup" class="vh1-pop"><div class="vh1-pop-head">POP-UP VIDEO</div><div id="vh1PopupBody" class="vh1-pop-body"></div><div class="vh1-pop-tail"></div></div>
    <div id="nextSongBanner" class="next-song-banner"><span class="label">A CONTINUACIÓN</span><span id="nextSongName">Sin programación</span></div>
    <div id="normalTransmissionClock" class="transmission-clock">00:00:00</div>
    <div id="oneMinuteAnnouncement" class="one-minute-announcement" aria-live="polite"><span class="one-minute-tag">EN 1 MINUTO</span><span id="oneMinuteSong" class="one-minute-song">A continuación: —</span></div>
-   <div id="transitionOverlay" class="transition"><div class="shine"></div><img id="transitionLogo" alt="Logo" style="display:none"><div id="transitionText" class="transition-text">SALVADO POR LOS 00S!</div><div id="transitionNextSong" class="transition-next"><span>A CONTINUACIÓN</span><strong id="transitionNextSongName">Sin programación</strong></div></div>
+   <div id="transitionOverlay" class="transition"><div class="shine"></div><img id="transitionLogo" alt="Logo" style="display:none"><div id="transitionText" class="transition-text">SALVADO POR LOS 00S!</div><div class="transition-current"><span id="transitionCurrentLabel">ESTÁS ESCUCHANDO</span><strong id="transitionCurrentSong">—</strong></div><div id="transitionNextSong" class="transition-next"><span id="transitionNextLabel">A CONTINUACIÓN</span><strong id="transitionNextSongName">Sin programación</strong></div></div>
    <div id="bumperScreen" class="bumper-screen"><div id="bumperPlayer"></div><div id="bumperText" class="bumper-caption"></div></div>
   </div>
   <div class="row"><button onclick="previousVideo()">⏮ ANTERIOR</button><button onclick="nextVideo()">SIGUIENTE ⏭</button><button onclick="restartVideo()">⟳ REINICIAR</button><button onclick="togglePlay()">▶ / ⏸ PLAY / PAUSA</button><button class="tvbutton" onclick="openTVMode()">MODO TV</button></div>
  </div>
  <div class="panel"><h2>AGREGAR VIDEOCLIP</h2><input id="videoUrl" placeholder="URL de YouTube"><input id="videoName" placeholder="Nombre de la canción"><button class="add" onclick="addVideo()">+ AGREGAR VIDEO</button><div id="videoStatus" class="status"></div><div id="videoList" class="list"></div></div>
+ <div class="panel"><h2>TOP: CLASIFICACIÓN MUSICAL</h2>
+  <p style="color:#bbb;font-size:13px">Convierte la lista de reproducción en un conteo TOP. El orden de tu lista determina los puestos: el primer videoclip ocupa el puesto más alto y luego continúa el conteo.</p>
+  <div class="row"><div><label for="topEnabled" style="color:#ccc">Activar rótulo TOP</label><select id="topEnabled"><option value="1">Activado</option><option value="0">Desactivado</option></select></div><div><label for="topCount" style="color:#ccc">Cantidad de puestos (1 a 1000)</label><input id="topCount" type="number" min="1" max="1000" value="100"></div></div>
+  <label for="nextSongLabelInput" style="display:block;color:#ccc;margin-top:8px">Texto antes del nombre de la siguiente canción</label><input id="nextSongLabelInput" value="A CONTINUACIÓN" maxlength="50" placeholder="Ej. LA SIGUIENTE CANCIÓN ES"><button class="add" onclick="saveTopSettings()">GUARDAR TOP Y TEXTOS</button><div id="topStatus" class="status"></div>
+ </div>
  <div class="panel"><h2>VH1 POP-UP VIDEO: DATOS DE LAS CANCIONES</h2>
-  <p style="color:#bbb;font-size:13px">Añade curiosidades que aparecerán encima del videoclip en el segundo que elijas, como los antiguos pop-ups de VH1. Los datos se guardan con cada canción y también aparecen en Modo TV.</p>
+  <p style="color:#bbb;font-size:13px">Añade curiosidades que aparecerán en tarjetas divididas en partes, una después de otra. Cada parte permanece varios segundos para que se pueda leer con calma. Incluye un sonido POP y funciona también en Modo TV.</p>
   <div id="vh1CurrentSong" style="color:#f5df32;font-weight:bold;margin:8px 0">Selecciona una canción de la lista para añadirle datos.</div>
   <div class="row"><div><label for="vh1Minute" style="color:#ccc">Minutos</label><input id="vh1Minute" type="number" min="0" max="999" value="0"></div><div><label for="vh1Second" style="color:#ccc">Segundos</label><input id="vh1Second" type="number" min="0" max="59" value="15"></div></div>
   <textarea id="vh1FactText" rows="3" placeholder="Ej. La canción fue escrita después de una discusión en el estudio..." style="width:100%;padding:11px;margin:5px 0;border-radius:6px;border:1px solid #444;background:#222;color:#fff;font:15px Arial"></textarea>
-  <div class="row"><div><label style="color:#ccc">Duración del pop-up</label><select id="vh1Duration"><option value="5">5 segundos</option><option value="7" selected>7 segundos</option><option value="10">10 segundos</option><option value="12">12 segundos</option></select></div><div><label style="color:#ccc">Título del pop-up</label><input id="vh1Label" value="DATO CURIOSO" maxlength="35"></div></div>
+  <div class="row"><div><label style="color:#ccc">Duración del pop-up</label><select id="vh1Duration"><option value="8" selected>8 segundos por parte</option><option value="10">10 segundos por parte</option><option value="12">12 segundos por parte</option><option value="15">15 segundos por parte</option></select></div><div><label style="color:#ccc">Título del pop-up</label><input id="vh1Label" value="DATO CURIOSO" maxlength="35"></div></div>
   <button class="add" onclick="addVH1Fact()">+ AÑADIR DATO A ESTA CANCIÓN</button>
   <div id="vh1FactStatus" class="status"></div><div id="vh1FactList" class="list"></div>
  </div>
@@ -144,14 +160,14 @@ body.closure-active #songTitle,body.closure-active #nextSongBanner,body.closure-
 <div id="tvModeScreen">
  <div id="tvModeVideo"></div>
  <div id="tvBrand" class="tv-brand top-left"><img id="tvModeLogo" alt="Logo del canal" style="display:none"><span id="tvModeBrandText"></span></div>
- <div id="tvModeTitle"></div>
+ <div id="tvModeTitle"></div><div id="topRankTV" class="top-rank"></div>
  <div id="tvBroadcastMessage" class="broadcast-message"></div>
  <div id="tvVH1Popup" class="vh1-pop"><div class="vh1-pop-head">POP-UP VIDEO</div><div id="tvVH1PopupBody" class="vh1-pop-body"></div><div class="vh1-pop-tail"></div></div>
  <div id="tvNextSongBanner" class="next-song-banner"><span class="label">A CONTINUACIÓN</span><span id="tvNextSongName">Sin programación</span></div>
  <div id="tvTransmissionClock" class="transmission-clock">00:00:00</div>
  <div id="tvOneMinuteAnnouncement" class="one-minute-announcement" aria-live="polite"><span class="one-minute-tag">EN 1 MINUTO</span><span id="tvOneMinuteSong" class="one-minute-song">A continuación: —</span></div>
  <div id="tvClosureScreen" class="closure-screen"><div id="tvClosureHeading" class="closure-heading">FIN DE TRANSMISIONES</div><div id="tvClosureMarquee" class="closure-marquee">MTV 80s ESPAÑOL VA A CERRAR. GRACIAS POR SER PARTE DE NUESTRA HISTORIA.</div><div id="tvClosureFooter" class="closure-small">Gracias por acompañarnos. Hasta siempre.</div></div>
- <div id="tvTransition" class="tv-transition"><img id="tvTransitionLogo" alt="Logo" style="display:none"><div id="tvTransitionText" class="tv-transition-text">SALVADO POR LOS 00S!</div><div id="tvTransitionNextSong" class="transition-next"><span>A CONTINUACIÓN</span><strong id="tvTransitionNextSongName">Sin programación</strong></div></div>
+ <div id="tvTransition" class="tv-transition"><img id="tvTransitionLogo" alt="Logo" style="display:none"><div id="tvTransitionText" class="tv-transition-text">SALVADO POR LOS 00S!</div><div class="transition-current"><span id="tvTransitionCurrentLabel">ESTÁS ESCUCHANDO</span><strong id="tvTransitionCurrentSong">—</strong></div><div id="tvTransitionNextSong" class="transition-next"><span id="tvTransitionNextLabel">A CONTINUACIÓN</span><strong id="tvTransitionNextSongName">Sin programación</strong></div></div>
  <div id="tvBumperScreen"><div id="tvBumperPlayer"></div><div id="tvBumperText" class="bumper-caption"></div></div>
  <button id="tvExit" type="button" aria-label="Salir del Modo TV" title="Salir del Modo TV" onclick="askCloseTVMode()">×</button>
  <div id="tvExitConfirm" role="dialog" aria-modal="true" aria-labelledby="tvExitQuestion"><p id="tvExitQuestion">¿De verdad quieres salir del Modo TV?</p><div class="tv-confirm-buttons"><button id="tvStayButton" type="button" onclick="cancelCloseTVMode()">NO, SEGUIR VIENDO</button><button id="tvConfirmExitButton" type="button" onclick="confirmCloseTVMode()">SÍ, SALIR</button></div></div>
@@ -172,7 +188,53 @@ let oneMinuteShownKey='';
 let oneMinuteHideTimer=null;
 let lastSmartBumperId=null;
 let smartBumperPool=[];
-let vh1ShownFacts=new Set(),vh1PopupTimer=null,vh1LastTime=0,vh1LastVideoKey="";
+let vh1ShownFacts=new Set(),vh1PopupTimer=null,vh1LastTime=0,vh1LastVideoKey="",vh1PageQueue=[],vh1PageIndex=0;
+let vh1AudioContext=null;
+function saveTopSettings(){
+ const count=Math.max(1,Math.min(1000,Number(document.getElementById('topCount').value)||100));
+ const enabled=document.getElementById('topEnabled').value==='1';
+ const label=(document.getElementById('nextSongLabelInput').value.trim()||'A CONTINUACIÓN').slice(0,50);
+ document.getElementById('topCount').value=count;
+ localStorage.setItem('topCount',String(count));localStorage.setItem('topEnabled',enabled?'1':'0');localStorage.setItem('nextSongLabel',label);
+ updateTopRank();updateNextSongBanner();showStatus('topStatus','TOP y texto de continuidad guardados.',true);
+}
+function loadTopSettings(){
+ document.getElementById('topCount').value=localStorage.getItem('topCount')||'100';
+ document.getElementById('topEnabled').value=localStorage.getItem('topEnabled')||'1';
+ document.getElementById('nextSongLabelInput').value=localStorage.getItem('nextSongLabel')||'A CONTINUACIÓN';
+}
+function updateTopRank(){
+ const enabled=localStorage.getItem('topEnabled')!=='0',count=Math.max(1,Math.min(1000,Number(localStorage.getItem('topCount'))||100));
+ const total=Math.min(count,videos.length),rank=Math.max(1,count-currentVideo);
+ const visible=enabled&&videos.length>0&&currentVideo<count;
+ ['topRankNormal','topRankTV'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.textContent='TOP '+count+'  ·  PUESTO #'+rank;el.classList.toggle('visible',visible)});
+}
+function playPopSound(){
+ try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!vh1AudioContext)vh1AudioContext=new AC();if(vh1AudioContext.state==='suspended')vh1AudioContext.resume();
+ const ctx=vh1AudioContext,osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime;
+ osc.type='sine';osc.frequency.setValueAtTime(880,now);osc.frequency.exponentialRampToValueAtTime(240,now+.095);
+ gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.22,now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+.13);
+ osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+.14);
+ }catch(e){}
+}
+function splitVH1Text(text){
+ const clean=String(text||'').trim().replace(/\s+/g,' ');if(!clean)return [];
+ const sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean],pages=[];let part='';
+ for(const sentenceRaw of sentences){let sentence=sentenceRaw.trim();while(sentence.length>115){const cut=sentence.lastIndexOf(' ',115);const n=cut>45?cut:115;const piece=sentence.slice(0,n).trim();if(part){pages.push(part);part=''}pages.push(piece);sentence=sentence.slice(n).trim()}
+  if(!sentence)continue;if((part+' '+sentence).trim().length>115){if(part)pages.push(part);part=sentence}else part=(part+' '+sentence).trim();
+ }
+ if(part)pages.push(part);return pages.length?pages:[clean];
+}
+function showVH1Page(){
+ if(!vh1PageQueue.length)return;
+ const tv=tvModeActive,box=document.getElementById(tv?'tvVH1Popup':'vh1Popup'),body=document.getElementById(tv?'tvVH1PopupBody':'vh1PopupBody');
+ if(!box||!body)return;
+ const page=vh1PageQueue[vh1PageIndex];box.querySelector('.vh1-pop-head').textContent=(page.label||'POP-UP VIDEO')+'  ·  '+(vh1PageIndex+1)+'/'+vh1PageQueue.length;
+ body.textContent=page.text;const marker=document.createElement('span');marker.className='vh1-pop-page';marker.textContent='PARTE '+(vh1PageIndex+1)+' DE '+vh1PageQueue.length;body.appendChild(marker);
+ box.classList.remove('visible');void box.offsetWidth;box.classList.add('visible');playPopSound();
+ const seconds=Math.max(6,Math.min(30,Number(page.duration)||8));clearTimeout(vh1PopupTimer);
+ vh1PopupTimer=setTimeout(()=>{vh1PageIndex++;if(vh1PageIndex<vh1PageQueue.length)showVH1Page();else{box.classList.remove('visible');vh1PageQueue=[];vh1PageIndex=0}},seconds*1000);
+}
 function updateTransmissionClock(){
  const enabled=localStorage.getItem('transmissionClockEnabled')!=='0';
  ['normalTransmissionClock','tvTransmissionClock'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=enabled?'block':'none'});
@@ -218,19 +280,19 @@ function checkOneMinuteAnnouncement(){
    hideOneMinuteAnnouncement();
    const id=tvModeActive?'tvOneMinuteAnnouncement':'oneMinuteAnnouncement';
    const textId=tvModeActive?'tvOneMinuteSong':'oneMinuteSong';
-   document.getElementById(textId).textContent='A CONTINUACIÓN: '+name;
+   const currentName=videos[currentVideo]?.name||'Video actual';const nextLabel=localStorage.getItem('nextSongLabel')||'A CONTINUACIÓN';document.getElementById(textId).textContent='AHORA SUENA: '+currentName+'  ·  '+nextLabel+': '+name;
    document.getElementById(id).classList.add('visible');
    oneMinuteHideTimer=setTimeout(hideOneMinuteAnnouncement,12000);
   }
  }catch(err){/* El reproductor puede no estar listo todavía. */}
 }
 function onMainPlayerState(e){if(e.data===YT.PlayerState.PLAYING)checkOneMinuteAnnouncement();if(!closureActive&&e.data===YT.PlayerState.ENDED){hideOneMinuteAnnouncement();startTransition((currentVideo+1)%Math.max(videos.length,1),true)}}
-function addVideo(){const id=getYouTubeID(document.getElementById('videoUrl').value);const name=document.getElementById('videoName').value.trim();if(!id)return showStatus('videoStatus','URL de YouTube no válida. Pega un enlace completo del video.',false);videos.push({id,name:name||'Video sin nombre'});saveVideos();document.getElementById('videoUrl').value='';document.getElementById('videoName').value='';renderVideos();updateNextSongBanner();showStatus('videoStatus','Videoclip añadido correctamente.',true);if(videos.length===1){currentVideo=0;selectVH1Video(0);currentErrorVideoId=videos[0].id;if(player){hideYouTubeError();player.loadVideoById(videos[0].id)}showBroadcastMessage('before')}}
+function addVideo(){const id=getYouTubeID(document.getElementById('videoUrl').value);const name=document.getElementById('videoName').value.trim();if(!id)return showStatus('videoStatus','URL de YouTube no válida. Pega un enlace completo del video.',false);videos.push({id,name:name||'Video sin nombre'});saveVideos();document.getElementById('videoUrl').value='';document.getElementById('videoName').value='';renderVideos();updateNextSongBanner();updateTopRank();showStatus('videoStatus','Videoclip añadido correctamente.',true);if(videos.length===1){currentVideo=0;selectVH1Video(0);currentErrorVideoId=videos[0].id;if(player){hideYouTubeError();player.loadVideoById(videos[0].id)}showBroadcastMessage('before')}}
 function saveVideos(){localStorage.setItem(STORAGE_VIDEOS,JSON.stringify(videos))}
 function renderVideos(){const c=document.getElementById('videoList');c.innerHTML='';videos.forEach((v,i)=>{const d=document.createElement('div');d.className='item';const strong=document.createElement('strong');strong.textContent=(i+1)+'. '+v.name;d.appendChild(strong);const b=document.createElement('div');b.className='item-buttons';b.appendChild(makeButton('▶ REPRODUCIR',()=>playVideo(i)));b.appendChild(makeButton('✎ DATOS VH1',()=>selectVH1Video(i)));b.appendChild(makeButton('ELIMINAR',()=>deleteVideo(i)));d.appendChild(b);c.appendChild(d)})}
-function moveVideo(i,delta){const j=i+delta;if(j<0||j>=videos.length)return;[videos[i],videos[j]]=[videos[j],videos[i]];if(currentVideo===i)currentVideo=j;else if(currentVideo===j)currentVideo=i;saveVideos();renderVideos();updateNextSongBanner()}
-function deleteVideo(i){const deletingCurrent=i===currentVideo;videos.splice(i,1);if(!videos.length){currentVideo=0;if(player)player.stopVideo();if(tvPlayer)tvPlayer.stopVideo();hideBroadcastMessages();}else{if(i<currentVideo)currentVideo--;else if(currentVideo>=videos.length)currentVideo=videos.length-1;}saveVideos();renderVideos();updateNextSongBanner();if(deletingCurrent&&videos.length){const v=videos[currentVideo];currentErrorVideoId=v.id;if(tvModeActive&&tvPlayer)tvPlayer.loadVideoById(v.id);else if(player)player.loadVideoById(v.id);showBroadcastMessage('before')}}
-function playVideo(i){if(!videos[i])return;resetVH1Playback();selectVH1Video(i);oneMinuteShownKey="";hideOneMinuteAnnouncement();stopNormalBumper();hideTransition();hideYouTubeError();currentVideo=i;currentErrorVideoId=videos[i].id;if(player)player.loadVideoById(videos[i].id);showSongTitle(videos[i].name);showBroadcastMessage('before');updateNextSongBanner()}
+function moveVideo(i,delta){const j=i+delta;if(j<0||j>=videos.length)return;[videos[i],videos[j]]=[videos[j],videos[i]];if(currentVideo===i)currentVideo=j;else if(currentVideo===j)currentVideo=i;saveVideos();renderVideos();updateNextSongBanner();updateTopRank()}
+function deleteVideo(i){const deletingCurrent=i===currentVideo;videos.splice(i,1);if(!videos.length){currentVideo=0;if(player)player.stopVideo();if(tvPlayer)tvPlayer.stopVideo();hideBroadcastMessages();}else{if(i<currentVideo)currentVideo--;else if(currentVideo>=videos.length)currentVideo=videos.length-1;}saveVideos();renderVideos();updateNextSongBanner();updateTopRank();if(deletingCurrent&&videos.length){const v=videos[currentVideo];currentErrorVideoId=v.id;if(tvModeActive&&tvPlayer)tvPlayer.loadVideoById(v.id);else if(player)player.loadVideoById(v.id);showBroadcastMessage('before')}}
+function playVideo(i){if(!videos[i])return;resetVH1Playback();selectVH1Video(i);oneMinuteShownKey="";hideOneMinuteAnnouncement();stopNormalBumper();hideTransition();hideYouTubeError();currentVideo=i;updateTopRank();currentErrorVideoId=videos[i].id;if(player)player.loadVideoById(videos[i].id);showSongTitle(videos[i].name);showBroadcastMessage('before');updateNextSongBanner()}
 function nextVideo(){if(!videos.length)return;startTransition((currentVideo+1)%videos.length,false)}
 function previousVideo(){if(!videos.length)return;playVideo((currentVideo-1+videos.length)%videos.length)}
 function restartVideo(){if(player){player.seekTo(0,true);player.playVideo()}}
@@ -246,12 +308,12 @@ function applyRandomTransition(overlayId){
  const effects=['fx-zoom','fx-wipe','fx-glitch','fx-flash'];
  el.classList.remove(...effects);void el.offsetWidth;el.classList.add(effects[Math.floor(Math.random()*effects.length)]);
 }
-function startTransition(nextIndex=(currentVideo+1)%Math.max(videos.length,1),completedSong=false){if(!videos.length||closureActive)return;resetVH1Playback();hideBroadcastMessages();clearTimeout(transitionTimer);stopNormalBumper();if(completedSong)songsSinceBumper++;currentVideo=nextIndex;updateNextSongBanner();setTransitionLogo('transitionLogo','transitionText');applyRandomTransition('transitionOverlay');document.getElementById('transitionOverlay').classList.add('active');const playBumper=songsSinceBumper>=1&&bumpers.length>0;if(playBumper)songsSinceBumper=0;transitionTimer=setTimeout(()=>{if(playBumper)playAutomaticBumper();else finishTransition()},1400)}
+function startTransition(nextIndex=(currentVideo+1)%Math.max(videos.length,1),completedSong=false){if(!videos.length||closureActive)return;const previousName=videos[currentVideo]?.name||'Video sin nombre';resetVH1Playback();hideBroadcastMessages();clearTimeout(transitionTimer);stopNormalBumper();if(completedSong)songsSinceBumper++;currentVideo=nextIndex;document.getElementById('transitionCurrentSong').textContent=previousName;document.getElementById('tvTransitionCurrentSong').textContent=previousName;updateNextSongBanner();setTransitionLogo('transitionLogo','transitionText');applyRandomTransition('transitionOverlay');document.getElementById('transitionOverlay').classList.add('active');const playBumper=songsSinceBumper>=1&&bumpers.length>0;if(playBumper)songsSinceBumper=0;transitionTimer=setTimeout(()=>{if(playBumper)playAutomaticBumper();else finishTransition()},1400)}
 function setTransitionLogo(imgId,textId){const url=localStorage.getItem('channelLogoUrl')||'';const img=document.getElementById(imgId);img.src=url;img.style.display=url?'block':'none';const liveText=(tvModeActive?document.getElementById('tvModeBrandText')?.textContent:document.getElementById('channelBrandText')?.textContent)||localStorage.getItem('channelLogoText')||'SALVADO POR LOS 00S!';document.getElementById(textId).textContent=liveText;document.getElementById(textId).style.color=localStorage.getItem('channelLogoTextColor')||'#ffffff'}
 function playAutomaticBumper(){if(!bumperPlayer||!bumpers.length){finishTransition();return}const b=pickSmartBumper();if(!b){finishTransition();return}bumperMode='auto';const run=++bumperRunId;clearTimeout(bumperTimer);document.body.classList.add('bumper-playing');hideBroadcastMessages();document.getElementById('bumperText').textContent=b.text||b.name||'';hideTransition();document.getElementById('bumperScreen').classList.add('active');bumperPlayer.loadVideoById(b.id);bumperPlayer.playVideo();}
 function onBumperPlayerState(e){if(e.data===YT.PlayerState.ENDED){if(bumperMode==='auto')finishAutomaticBumper();else if(bumperMode==='manual')finishManualBumper()}}
 function finishAutomaticBumper(){if(bumperMode!=='auto')return;bumperMode=null;++bumperRunId;clearTimeout(bumperTimer);bumperTimer=null;document.getElementById('bumperScreen').classList.remove('active');if(bumperPlayer)bumperPlayer.stopVideo();document.body.classList.remove('bumper-playing');finishTransition()}
-function finishTransition(){selectVH1Video(currentVideo);oneMinuteShownKey="";hideOneMinuteAnnouncement();hideTransition();document.getElementById('bumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');hideNextSongBanner();const v=videos[currentVideo];if(!v)return;currentErrorVideoId=v.id;hideYouTubeError();if(player)player.loadVideoById(v.id);showSongTitle(v.name);showBroadcastMessage('after');updateNextSongBanner()}
+function finishTransition(){selectVH1Video(currentVideo);oneMinuteShownKey="";hideOneMinuteAnnouncement();hideTransition();document.getElementById('bumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');hideNextSongBanner();const v=videos[currentVideo];if(!v)return;currentErrorVideoId=v.id;hideYouTubeError();if(player)player.loadVideoById(v.id);showSongTitle(v.name);showBroadcastMessage('after');updateNextSongBanner();updateTopRank()}
 function hideTransition(){document.getElementById('transitionOverlay').classList.remove('active')}
 function stopNormalBumper(){++bumperRunId;clearTimeout(bumperTimer);bumperTimer=null;bumperMode=null;document.getElementById('bumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');if(bumperPlayer)bumperPlayer.stopVideo()}
 function addBumper(){const id=getYouTubeID(document.getElementById('bumperUrl').value);const name=document.getElementById('bumperName').value.trim();const text=document.getElementById('bumperTextInput').value.trim();if(!id)return showStatus('bumperStatus','URL de YouTube no válida. Usa un enlace de video de 11 caracteres de ID.',false);bumpers.push({id,name:name||'Bumper '+(bumpers.length+1),text:text||name||''});smartBumperPool=[];localStorage.setItem(STORAGE_BUMPERS,JSON.stringify(bumpers));['bumperUrl','bumperName','bumperTextInput'].forEach(id=>document.getElementById(id).value='');renderBumpers();showStatus('bumperStatus','Comercial/loop añadido correctamente.',true)}
@@ -267,7 +329,7 @@ function updateBrandText(){const texts=getAutoBrandTexts(),enabled=localStorage.
 function startAutoBrandRotation(){clearInterval(autoBrandTimer);updateBrandText();const texts=getAutoBrandTexts();if(localStorage.getItem('autoBrandEnabled')!=='0'&&texts.length>1){const seconds=Math.max(2,Math.min(300,Number(localStorage.getItem('autoBrandSeconds'))||8));autoBrandTimer=setInterval(updateBrandText,seconds*1000)}}
 function loadAutoBrandSettings(){document.getElementById('autoBrandTexts').value=localStorage.getItem('autoBrandTexts')??'¡QUIERO MI 80s!\n¡ADIÓS A MTV80s!\nESTÁS VIENDO MUSICBOX 00s';document.getElementById('autoBrandEnabled').checked=localStorage.getItem('autoBrandEnabled')!=='0';document.getElementById('autoBrandSeconds').value=localStorage.getItem('autoBrandSeconds')||'8';startAutoBrandRotation()}
 function applyLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',color=localStorage.getItem('channelLogoTextColor')||'#ffffff',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('channelLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('channelBrandText').textContent=text;document.getElementById('channelBrandText').style.color=color;document.getElementById('normalBrand').className='brand '+pos;document.getElementById('logoUrl').value=url;document.getElementById('logoText').value=text;document.getElementById('logoTextColor').value=color;document.getElementById('logoPosition').value=pos;applyTVLogo();setTransitionLogo('transitionLogo','transitionText');setTransitionLogo('tvTransitionLogo','tvTransitionText')}
-function updateNextSongBanner(){const show=videos.length>0;const next=show?videos[(currentVideo+1)%videos.length].name:'Sin programación';const label=next||'Video sin nombre';document.getElementById('nextSongName').textContent=label;document.getElementById('tvNextSongName').textContent=label;document.getElementById('transitionNextSongName').textContent=label;document.getElementById('tvTransitionNextSongName').textContent=label;hideNextSongBanner()}
+function updateNextSongBanner(){const show=videos.length>0;const next=show?videos[(currentVideo+1)%videos.length].name:'Sin programación';const label=next||'Video sin nombre';document.getElementById('nextSongName').textContent=label;document.getElementById('tvNextSongName').textContent=label;document.getElementById('transitionNextSongName').textContent=label;document.getElementById('tvTransitionNextSongName').textContent=label;const nextLabel=localStorage.getItem('nextSongLabel')||'A CONTINUACIÓN';['transitionNextLabel','tvTransitionNextLabel'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=nextLabel});updateTopRank();hideNextSongBanner()}
 function showNextSongBanner(){const id=tvModeActive?'tvNextSongBanner':'nextSongBanner';document.getElementById(id).classList.toggle('visible',videos.length>0)}
 function hideNextSongBanner(){document.getElementById('nextSongBanner').classList.remove('visible');document.getElementById('tvNextSongBanner').classList.remove('visible')}
 function saveBroadcastSettings(){
@@ -329,10 +391,10 @@ function addVH1Fact(){
  const minutes=Math.max(0,Number(document.getElementById('vh1Minute').value)||0),seconds=Math.max(0,Math.min(59,Number(document.getElementById('vh1Second').value)||0));
  const text=document.getElementById('vh1FactText').value.trim();if(!text){showStatus('vh1FactStatus','Escribe el dato que quieres mostrar.',false);return;}
  v.vh1Facts=Array.isArray(v.vh1Facts)?v.vh1Facts:[];
- v.vh1Facts.push({id:'vh1_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),time:minutes*60+seconds,text,label:document.getElementById('vh1Label').value.trim()||'DATO CURIOSO',duration:Number(document.getElementById('vh1Duration').value)||7});
+ v.vh1Facts.push({id:'vh1_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),time:minutes*60+seconds,text,label:document.getElementById('vh1Label').value.trim()||'DATO CURIOSO',duration:Number(document.getElementById('vh1Duration').value)||8});
  v.vh1Facts.sort((a,b)=>a.time-b.time);saveVideos();document.getElementById('vh1FactText').value='';renderVH1Facts(currentVideo);showStatus('vh1FactStatus','Dato VH1 añadido y guardado.',true);
 }
-function hideVH1Popup(){['vh1Popup','tvVH1Popup'].forEach(id=>document.getElementById(id)?.classList.remove('visible'));clearTimeout(vh1PopupTimer);vh1PopupTimer=null;}
+function hideVH1Popup(){['vh1Popup','tvVH1Popup'].forEach(id=>document.getElementById(id)?.classList.remove('visible'));clearTimeout(vh1PopupTimer);vh1PopupTimer=null;vh1PageQueue=[];vh1PageIndex=0;}
 function resetVH1Playback(){vh1ShownFacts.clear();vh1LastTime=0;vh1LastVideoKey='';hideVH1Popup();}
 function checkVH1Popups(){
  if(closureActive||bumperMode==='auto'||bumperMode==='manual'||tvBumperMode==='auto'||document.body.classList.contains('bumper-playing')||!videos.length)return;
@@ -347,9 +409,7 @@ function checkVH1Popups(){
   vh1LastTime=now;
   if(!due)return;
   vh1ShownFacts.add(due.id);hideVH1Popup();
-  const tv=tvModeActive,box=document.getElementById(tv?'tvVH1Popup':'vh1Popup'),body=document.getElementById(tv?'tvVH1PopupBody':'vh1PopupBody');
-  box.querySelector('.vh1-pop-head').textContent=due.label||'POP-UP VIDEO';body.textContent=due.text;box.classList.add('visible');
-  vh1PopupTimer=setTimeout(()=>box.classList.remove('visible'),Math.max(2,Math.min(30,Number(due.duration)||7))*1000);
+  const parts=splitVH1Text(due.text);vh1PageQueue=parts.map(text=>({text,label:due.label||'POP-UP VIDEO',duration:Math.max(6,Number(due.duration)||8)}));vh1PageIndex=0;showVH1Page();
  }catch(e){/* YouTube aún puede estar cargando. */}
 }
 function saveSongTitleStyle(){
@@ -372,11 +432,11 @@ function makeButton(label,fn){const b=document.createElement('button');b.textCon
 function openTVMode(){if(!videos.length)return showStatus('videoStatus','Añade al menos un videoclip primero.',false);document.getElementById('tvExit').classList.remove('visible');document.getElementById('tvExitConfirm').classList.remove('visible');tvModeActive=true;document.getElementById('tvModeScreen').style.display='block';document.body.classList.add('tv-active');if(closureActive){document.getElementById('closureScreen').classList.remove('active');document.getElementById('tvClosureScreen').classList.add('active');}else if(player&&typeof player.pauseVideo==='function'){player.pauseVideo()}createTVPlayers();applyTVLogo();updateNextSongBanner();if(tvPlayer&&tvPlayersCreated&&tvPlayerReady&&!closureActive){tvPlayer.loadVideoById(videos[currentVideo].id);showTVTitle(videos[currentVideo].name);showBroadcastMessage('before')}}
 function createTVPlayers(){if(tvPlayersCreated||!youtubeReady)return;tvPlayersCreated=true;tvPlayer=new YT.Player('tvModeVideo',{width:'100%',height:'100%',playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,modestbranding:1},events:{onReady:()=>{tvPlayerReady=true;if(tvModeActive&&videos.length){if(closureActive){try{tvPlayer.pauseVideo()}catch(e){}document.getElementById('tvClosureScreen').classList.add('active')}else{tvPlayer.loadVideoById(videos[currentVideo].id);showTVTitle(videos[currentVideo].name);showBroadcastMessage('before')}}},onStateChange:onTVPlayerState,onError:e=>showStatus('videoStatus','No se pudo reproducir el video en Modo TV (error '+e.data+').',false)}});tvBumperPlayer=new YT.Player('tvBumperPlayer',{width:'100%',height:'100%',playerVars:{autoplay:0,controls:0,rel:0,playsinline:1,modestbranding:1},events:{onStateChange:onTVBumperState,onError:e=>{if(tvBumperMode==='auto')finishTVAutomaticBumper();showStatus('bumperStatus','YouTube no permitió reproducir el bumper en Modo TV.',false)}}})}
 function onTVPlayerState(e){if(e.data===YT.PlayerState.PLAYING)checkOneMinuteAnnouncement();if(!closureActive&&e.data===YT.PlayerState.ENDED){hideOneMinuteAnnouncement();startTVTransition(true)}}
-function startTVTransition(completedSong=true){if(!videos.length||closureActive)return;resetVH1Playback();hideBroadcastMessages();if(completedSong)tvSongsSinceBumper++;currentVideo=(currentVideo+1)%videos.length;updateNextSongBanner();setTransitionLogo('tvTransitionLogo','tvTransitionText');applyRandomTransition('tvTransition');document.getElementById('tvTransition').classList.add('active');const playBumper=tvSongsSinceBumper>=1&&bumpers.length>0;if(playBumper)tvSongsSinceBumper=0;setTimeout(()=>{if(playBumper)playTVAutomaticBumper();else finishTVTransition()},1400)}
+function startTVTransition(completedSong=true){if(!videos.length||closureActive)return;const previousName=videos[currentVideo]?.name||'Video sin nombre';resetVH1Playback();hideBroadcastMessages();if(completedSong)tvSongsSinceBumper++;currentVideo=(currentVideo+1)%videos.length;document.getElementById('tvTransitionCurrentSong').textContent=previousName;document.getElementById('transitionCurrentSong').textContent=previousName;updateNextSongBanner();setTransitionLogo('tvTransitionLogo','tvTransitionText');applyRandomTransition('tvTransition');document.getElementById('tvTransition').classList.add('active');const playBumper=tvSongsSinceBumper>=1&&bumpers.length>0;if(playBumper)tvSongsSinceBumper=0;setTimeout(()=>{if(playBumper)playTVAutomaticBumper();else finishTVTransition()},1400)}
 function playTVAutomaticBumper(){if(!tvBumperPlayer||!bumpers.length){finishTVTransition();return}const b=pickSmartBumper();if(!b){finishTVTransition();return}tvBumperMode='auto';const run=++tvBumperRunId;clearTimeout(tvBumperTimer);document.body.classList.add('bumper-playing');hideBroadcastMessages();document.getElementById('tvBumperText').textContent=b.text||b.name||'';document.getElementById('tvTransition').classList.remove('active');document.getElementById('tvBumperScreen').classList.add('active');tvBumperPlayer.loadVideoById(b.id);tvBumperPlayer.playVideo();}
 function onTVBumperState(e){if(e.data===YT.PlayerState.ENDED&&tvBumperMode==='auto')finishTVAutomaticBumper()}
 function finishTVAutomaticBumper(){if(tvBumperMode!=='auto')return;tvBumperMode=null;++tvBumperRunId;clearTimeout(tvBumperTimer);tvBumperTimer=null;document.getElementById('tvBumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');if(tvBumperPlayer)tvBumperPlayer.stopVideo();finishTVTransition()}
-function finishTVTransition(){selectVH1Video(currentVideo);oneMinuteShownKey="";hideOneMinuteAnnouncement();document.getElementById('tvTransition').classList.remove('active');document.getElementById('tvBumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');hideNextSongBanner();const v=videos[currentVideo];if(!v)return;if(tvPlayer){tvPlayer.loadVideoById(v.id);tvPlayer.playVideo()}showTVTitle(v.name);showBroadcastMessage('after');updateNextSongBanner()}
+function finishTVTransition(){selectVH1Video(currentVideo);oneMinuteShownKey="";hideOneMinuteAnnouncement();document.getElementById('tvTransition').classList.remove('active');document.getElementById('tvBumperScreen').classList.remove('active');document.body.classList.remove('bumper-playing');hideNextSongBanner();const v=videos[currentVideo];if(!v)return;if(tvPlayer){tvPlayer.loadVideoById(v.id);tvPlayer.playVideo()}showTVTitle(v.name);showBroadcastMessage('after');updateNextSongBanner();updateTopRank()}
 function showTVTitle(name){applySongTitleStyle();const el=document.getElementById('tvModeTitle');el.textContent=name||'';el.classList.add('show');clearTimeout(tvTitleTimer);tvTitleTimer=setTimeout(()=>el.classList.remove('show'),10000)}
 function applyTVLogo(){const url=localStorage.getItem('channelLogoUrl')||'',text=localStorage.getItem('channelLogoText')||'',color=localStorage.getItem('channelLogoTextColor')||'#ffffff',pos=localStorage.getItem('channelLogoPosition')||'top-left';const img=document.getElementById('tvModeLogo');img.src=url;img.style.display=url?'block':'none';document.getElementById('tvModeBrandText').textContent=text;document.getElementById('tvModeBrandText').style.color=color;document.getElementById('tvBrand').className='tv-brand '+pos}
 function showTVExitControl(){if(!tvModeActive)return;const button=document.getElementById('tvExit');button.classList.add('visible');clearTimeout(tvExitHideTimer);tvExitHideTimer=setTimeout(()=>{if(!document.getElementById('tvExitConfirm').classList.contains('visible'))button.classList.remove('visible')},2400)}
@@ -433,7 +493,7 @@ function loadClosureSettings(){
  document.getElementById('closureFooterInput').value=localStorage.getItem('closureFooter')||'Gracias por acompañarnos. Hasta siempre.';
  document.getElementById('closureSpeed').value=localStorage.getItem('closureSpeed')||'90';
 }
-document.addEventListener('DOMContentLoaded',()=>{renderVideos();renderBumpers();if(videos.length)selectVH1Video(currentVideo);applyLogo();loadAutoBrandSettings();loadBroadcastSettings();loadSongTitleStyle();loadTransmissionClockSettings();setupTVExitReveal();updateNextSongBanner();setInterval(checkOneMinuteAnnouncement,1000);setInterval(checkVH1Popups,400);setInterval(updateTransmissionClock,1000)});
+document.addEventListener('DOMContentLoaded',()=>{renderVideos();renderBumpers();if(videos.length)selectVH1Video(currentVideo);applyLogo();loadAutoBrandSettings();loadBroadcastSettings();loadSongTitleStyle();loadTransmissionClockSettings();loadTopSettings();setupTVExitReveal();updateNextSongBanner();updateTopRank();setInterval(checkOneMinuteAnnouncement,1000);setInterval(checkVH1Popups,400);setInterval(updateTransmissionClock,1000)});
 </script>
 </body>
 </html>
