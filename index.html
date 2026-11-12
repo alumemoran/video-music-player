@@ -390,6 +390,9 @@ function addVH1Fact(){
 function hideVH1Popup(){['vh1Popup','tvVH1Popup'].forEach(id=>document.getElementById(id)?.classList.remove('visible'));clearTimeout(vh1PopupTimer);vh1PopupTimer=null;}
 function resetVH1Playback(){vh1ShownFacts.clear();vh1LastTime=0;vh1LastVideoKey='';hideVH1Popup();}
 function checkVH1Popups(){
+ // No iniciar otro dato mientras el pop-up anterior siga visible.
+ // Los datos cuyo segundo ya pasó quedan pendientes y salen en orden.
+ if(vh1PopupTimer!==null)return;
  if(closureActive||bumperMode==='auto'||bumperMode==='manual'||tvBumperMode==='auto'||document.body.classList.contains('bumper-playing')||!videos.length)return;
  const active=tvModeActive?tvPlayer:player;if(!active||typeof active.getPlayerState!=='function')return;
  try{
