@@ -188,7 +188,7 @@ let oneMinuteShownKey='';
 let oneMinuteHideTimer=null;
 let lastSmartBumperId=null;
 let smartBumperPool=[];
-let vh1ShownFacts=new Set(),vh1PopupTimer=null,vh1LastTime=0,vh1LastVideoKey="",vh1PageQueue=[],vh1PageIndex=0;
+let vh1ShownFacts=new Set(),vh1PopupTimer=null,vh1LastTime=0,vh1LastVideoKey="";
 let vh1AudioContext=null;
 function saveTopSettings(){
  const count=Math.max(1,Math.min(1000,Number(document.getElementById('topCount').value)||100));
@@ -217,23 +217,16 @@ function playPopSound(){
  osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+.14);
  }catch(e){}
 }
-function splitVH1Text(text){
- const clean=String(text||'').trim().replace(/\s+/g,' ');if(!clean)return [];
- const sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean],pages=[];let part='';
- for(const sentenceRaw of sentences){let sentence=sentenceRaw.trim();while(sentence.length>115){const cut=sentence.lastIndexOf(' ',115);const n=cut>45?cut:115;const piece=sentence.slice(0,n).trim();if(part){pages.push(part);part=''}pages.push(piece);sentence=sentence.slice(n).trim()}
-  if(!sentence)continue;if((part+' '+sentence).trim().length>115){if(part)pages.push(part);part=sentence}else part=(part+' '+sentence).trim();
- }
- if(part)pages.push(part);return pages.length?pages:[clean];
-}
-function showVH1Page(){
- if(!vh1PageQueue.length)return;
+function showVH1Fact(fact){
  const tv=tvModeActive,box=document.getElementById(tv?'tvVH1Popup':'vh1Popup'),body=document.getElementById(tv?'tvVH1PopupBody':'vh1PopupBody');
  if(!box||!body)return;
- const page=vh1PageQueue[vh1PageIndex];box.querySelector('.vh1-pop-head').textContent=(page.label||'POP-UP VIDEO')+'  ·  '+(vh1PageIndex+1)+'/'+vh1PageQueue.length;
- body.textContent=page.text;const marker=document.createElement('span');marker.className='vh1-pop-page';marker.textContent='PARTE '+(vh1PageIndex+1)+' DE '+vh1PageQueue.length;body.appendChild(marker);
+ const head=box.querySelector('.vh1-pop-head');
+ if(head)head.textContent=fact.label||'DATO CURIOSO';
+ body.textContent=String(fact.text||'');
  box.classList.remove('visible');void box.offsetWidth;box.classList.add('visible');playPopSound();
- const seconds=Math.max(6,Math.min(30,Number(page.duration)||8));clearTimeout(vh1PopupTimer);
- vh1PopupTimer=setTimeout(()=>{vh1PageIndex++;if(vh1PageIndex<vh1PageQueue.length)showVH1Page();else{box.classList.remove('visible');vh1PageQueue=[];vh1PageIndex=0}},seconds*1000);
+ const seconds=Math.max(6,Math.min(60,Number(fact.duration)||8));
+ clearTimeout(vh1PopupTimer);
+ vh1PopupTimer=setTimeout(()=>{box.classList.remove('visible');vh1PopupTimer=null},seconds*1000);
 }
 function updateTransmissionClock(){
  const enabled=localStorage.getItem('transmissionClockEnabled')!=='0';
@@ -394,7 +387,7 @@ function addVH1Fact(){
  v.vh1Facts.push({id:'vh1_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),time:minutes*60+seconds,text,label:document.getElementById('vh1Label').value.trim()||'DATO CURIOSO',duration:Number(document.getElementById('vh1Duration').value)||8});
  v.vh1Facts.sort((a,b)=>a.time-b.time);saveVideos();document.getElementById('vh1FactText').value='';renderVH1Facts(currentVideo);showStatus('vh1FactStatus','Dato VH1 añadido y guardado.',true);
 }
-function hideVH1Popup(){['vh1Popup','tvVH1Popup'].forEach(id=>document.getElementById(id)?.classList.remove('visible'));clearTimeout(vh1PopupTimer);vh1PopupTimer=null;vh1PageQueue=[];vh1PageIndex=0;}
+function hideVH1Popup(){['vh1Popup','tvVH1Popup'].forEach(id=>document.getElementById(id)?.classList.remove('visible'));clearTimeout(vh1PopupTimer);vh1PopupTimer=null;}
 function resetVH1Playback(){vh1ShownFacts.clear();vh1LastTime=0;vh1LastVideoKey='';hideVH1Popup();}
 function checkVH1Popups(){
  if(closureActive||bumperMode==='auto'||bumperMode==='manual'||tvBumperMode==='auto'||document.body.classList.contains('bumper-playing')||!videos.length)return;
@@ -409,7 +402,7 @@ function checkVH1Popups(){
   vh1LastTime=now;
   if(!due)return;
   vh1ShownFacts.add(due.id);hideVH1Popup();
-  const parts=splitVH1Text(due.text);vh1PageQueue=parts.map(text=>({text,label:due.label||'POP-UP VIDEO',duration:Math.max(6,Number(due.duration)||8)}));vh1PageIndex=0;showVH1Page();
+  showVH1Fact(due);
  }catch(e){/* YouTube aún puede estar cargando. */}
 }
 function saveSongTitleStyle(){
